@@ -3,7 +3,6 @@ import { useAuthStore } from '../store/authStore';
 
 export default function ProtectedRoutes() {
     const { isAuthenticated } = useAuthStore();
-
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }

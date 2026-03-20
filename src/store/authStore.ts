@@ -1,7 +1,13 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 interface User {
-    name: string;
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface AuthState {
@@ -14,12 +20,22 @@ interface AuthState {
     setLoading: (value: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>(set => ({
-    user: null,
-    isAuthenticated: false,
-    login: (userData: User | null) => set({ user: userData }),
-    logout: () => set({ user: null }),
-    setAuthState: (isAuthenticated: boolean) => set({ isAuthenticated }),
-    isLoading: true, // important
-    setLoading: value => set({ isLoading: value }),
-}));
+export const useAuthStore = create<AuthState>()(
+    devtools(
+        set => ({
+            user: null,
+            isAuthenticated: false,
+
+            login: (userData: User) => set({ user: userData, isAuthenticated: true }),
+
+            logout: () => set({ user: null, isAuthenticated: false }),
+
+            setAuthState: (isAuthenticated: boolean) => set({ isAuthenticated }),
+
+            isLoading: true,
+
+            setLoading: (value: boolean) => set({ isLoading: value }),
+        }),
+        { name: 'AuthStore' }
+    )
+);

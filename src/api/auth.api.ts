@@ -12,3 +12,15 @@ export const logoutApi = () => {
         method: 'POST',
     });
 };
+
+export const signUpApi = (data: {
+    first_name: string;
+    last_name: string;
+    password: string;
+    email: string;
+}) => {
+    return apiClient('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    });
+};

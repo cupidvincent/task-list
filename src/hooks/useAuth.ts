@@ -1,16 +1,31 @@
 import { useEffect } from 'react';
-import { logoutApi, loginApi } from '../api/auth.api';
-import { apiClient } from '../api/client';
+import { logoutApi } from '../api/auth.api';
 import { useAuthStore } from '../store/authStore';
+import { useMutation } from '@tanstack/react-query';
+import { loginApiV2 } from '@/services/auth.service';
+import { useCheckAuth } from './useCheckAuth';
 
 export const useAuth = () => {
-    const { user, isAuthenticated, login, logout, setAuthState, setLoading, isLoading } =
-        useAuthStore();
+    const { user, isAuthenticated, login, logout, setLoading, isLoading } = useAuthStore();
+
+    const { refetch } = useCheckAuth();
+
+    const mutationLogin = useMutation({
+        mutationFn: loginApiV2,
+        onSuccess: data => {
+            return data;
+        },
+        onError: error => {
+            console.log('Login failed', error);
+            return error;
+        },
+    });
 
     const loginHook = async (email: string, password: string) => {
-        const res = await loginApi(email, password);
-        console.log({ res });
-        // const profile = await getProfileApi();
+        const res = await mutationLogin.mutateAsync({
+            email: email,
+            password: password,
+        });
         login(res);
         return res;
     };
@@ -20,21 +35,27 @@ export const useAuth = () => {
         logout();
     };
 
-    const checkAuth = async () => {
-        try {
-            const profile = await apiClient('/auth/details');
-            login(profile);
-            setAuthState(true);
-        } catch {
-            logout();
-            setAuthState(false);
-        } finally {
-            setLoading(false);
-        }
+    // const checkAuth = async () => {
+    //     try {
+    //         const profile = await apiClient('/auth/details');
+    //         login(profile);
+    //         console.log({ profile });
+    //         setAuthState(true);
+    //     } catch {
+    //         logout();
+    //         setAuthState(false);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    const check = async () => {
+        await refetch();
+        setLoading(false);
     };
 
     useEffect(() => {
-        checkAuth();
+        check();
     }, []);
 
     return {
@@ -42,7 +63,7 @@ export const useAuth = () => {
         isAuthenticated,
         loginHook,
         logoutHook,
-        checkAuth,
         isLoading,
+        checkAuth: refetch,
     };
 };

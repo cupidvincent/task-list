@@ -1,4 +1,4 @@
-export default function SideBar() {
+export default function SideBar({ name, email }: { name: string; email?: string }) {
     return (
         <nav className="bg-[#121e31] h-screen  min-w-[250px] py-6 px-4 tracking-wide overflow-auto">
             <div className="flex flex-wrap items-center gap-4 cursor-pointer">
@@ -7,8 +7,8 @@ export default function SideBar() {
                     className="w-10 h-10 rounded-full border-2 border-white"
                 />
                 <div>
-                    <p className="text-sm text-white">John Doe</p>
-                    <p className="text-xs text-gray-300 mt-0.5">johndoe23@gmail.com</p>
+                    <p className="text-sm text-white">{name}</p>
+                    <p className="text-xs text-gray-300 mt-0.5">{email}</p>
                 </div>
             </div>
 

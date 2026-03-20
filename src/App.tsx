@@ -1,10 +1,11 @@
+import { LoadingScreen } from './components/LoadingScreen';
 import { useAuth } from './hooks/useAuth';
 import AppRoutes from './routes/AppRoutes';
 
 function App() {
     const { isLoading } = useAuth();
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <LoadingScreen />;
 
     return <AppRoutes />;
 }
